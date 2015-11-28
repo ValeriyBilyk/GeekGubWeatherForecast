@@ -19,6 +19,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import io.realm.Realm;
+
 public class DetailsFragment extends Fragment {
 
     Context context;
@@ -33,7 +35,9 @@ public class DetailsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Forecast forecast = getArguments().getParcelable("forecast");
+        int forecastId = getArguments().getInt("forecastId");
+
+        Forecast forecast = Realm.getInstance(getActivity()).where(Forecast.class).equalTo("id", forecastId).findFirst();
 
         TextView detailsTime = (TextView) view.findViewById(R.id.details_time);
         TextView detailsDate = (TextView) view.findViewById(R.id.details_date);
@@ -68,7 +72,6 @@ public class DetailsFragment extends Fragment {
         Picasso.with(context)
                 .load(iconUrl)
                 .into(image);
-
 
     }
 

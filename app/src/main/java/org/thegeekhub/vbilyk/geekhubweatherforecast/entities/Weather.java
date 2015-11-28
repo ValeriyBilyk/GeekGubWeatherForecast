@@ -1,23 +1,12 @@
 package org.thegeekhub.vbilyk.geekhubweatherforecast.entities;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import io.realm.RealmObject;
 
 /**
- * Created by Admin on 20.11.2015.
+ * Created by Admin on 20.11.2015
  */
-public class Weather implements Parcelable {
-
-    public static final Parcelable.Creator<Weather> CREATOR = new Parcelable.Creator<Weather>() {
-        public Weather createFromParcel(Parcel source) {
-            return new Weather(source);
-        }
-
-        public Weather[] newArray(int size) {
-            return new Weather[size];
-        }
-    };
-    private int id;
+public class Weather extends RealmObject {
+    private long id;
     private String main;
     private String description;
     private String icon;
@@ -25,18 +14,11 @@ public class Weather implements Parcelable {
     public Weather() {
     }
 
-    protected Weather(Parcel in) {
-        this.id = in.readInt();
-        this.main = in.readString();
-        this.description = in.readString();
-        this.icon = in.readString();
-    }
-
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -62,18 +44,5 @@ public class Weather implements Parcelable {
 
     public void setIcon(String icon) {
         this.icon = icon;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.id);
-        dest.writeString(this.main);
-        dest.writeString(this.description);
-        dest.writeString(this.icon);
     }
 }

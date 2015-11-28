@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import org.thegeekhub.vbilyk.geekhubweatherforecast.R;
-import org.thegeekhub.vbilyk.geekhubweatherforecast.entities.Forecast;
 import org.thegeekhub.vbilyk.geekhubweatherforecast.fragments.DetailsFragment;
 
 public class DetailsActivity extends AppCompatActivity {
@@ -14,12 +13,12 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        Forecast forecast = getIntent().getParcelableExtra("forecast");
+        int forecastId = getIntent().getIntExtra("forecastId", 0);
 
 
         DetailsFragment detailsFragment = new DetailsFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelable("forecast", forecast);
+        bundle.putInt("forecastId", forecastId);
         detailsFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_weather_details, detailsFragment).commit();
 

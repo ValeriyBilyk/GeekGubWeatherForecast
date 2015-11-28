@@ -1,11 +1,16 @@
 package org.thegeekhub.vbilyk.geekhubweatherforecast.entities;
 
-public class City {
+import io.realm.RealmObject;
+
+public class City extends RealmObject {
 
     private int id;
     private String name;
     private String country;
     private int population;
+
+    public City() {
+    }
 
     public int getId() {
         return id;

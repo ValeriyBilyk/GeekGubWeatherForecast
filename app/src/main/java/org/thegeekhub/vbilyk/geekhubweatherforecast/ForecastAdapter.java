@@ -14,6 +14,7 @@ import org.thegeekhub.vbilyk.geekhubweatherforecast.entities.Forecast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +26,11 @@ public class ForecastAdapter extends BaseAdapter {
     private final List<Forecast> forecastList;
 
     public ForecastAdapter(Context context, List<Forecast> forecastList) {
-        this.forecastList = forecastList;
+        if (forecastList != null) {
+            this.forecastList = forecastList;
+        } else {
+            this.forecastList = new ArrayList<>();
+        }
         this.context = context;
         inflater = LayoutInflater.from(context);
     }

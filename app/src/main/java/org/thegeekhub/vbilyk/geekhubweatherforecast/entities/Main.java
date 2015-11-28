@@ -1,21 +1,11 @@
 package org.thegeekhub.vbilyk.geekhubweatherforecast.entities;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.annotations.SerializedName;
 
-public class Main implements Parcelable {
+import io.realm.RealmObject;
 
-    public static final Parcelable.Creator<Main> CREATOR = new Parcelable.Creator<Main>() {
-        public Main createFromParcel(Parcel source) {
-            return new Main(source);
-        }
+public class Main extends RealmObject {
 
-        public Main[] newArray(int size) {
-            return new Main[size];
-        }
-    };
     private double temp;
     @SerializedName("temp_min")
     private double tempMin;
@@ -31,17 +21,6 @@ public class Main implements Parcelable {
     private double tempKf;
 
     public Main() {
-    }
-
-    protected Main(Parcel in) {
-        this.temp = in.readDouble();
-        this.tempMin = in.readDouble();
-        this.tempMax = in.readDouble();
-        this.pressure = in.readDouble();
-        this.seaLevel = in.readDouble();
-        this.grndLevel = in.readDouble();
-        this.humidity = in.readInt();
-        this.tempKf = in.readDouble();
     }
 
     public double getTemp() {
@@ -106,22 +85,5 @@ public class Main implements Parcelable {
 
     public void setTempKf(double tempKf) {
         this.tempKf = tempKf;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeDouble(this.temp);
-        dest.writeDouble(this.tempMin);
-        dest.writeDouble(this.tempMax);
-        dest.writeDouble(this.pressure);
-        dest.writeDouble(this.seaLevel);
-        dest.writeDouble(this.grndLevel);
-        dest.writeInt(this.humidity);
-        dest.writeDouble(this.tempKf);
     }
 }
