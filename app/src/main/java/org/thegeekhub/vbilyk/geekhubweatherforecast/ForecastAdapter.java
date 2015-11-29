@@ -63,6 +63,13 @@ public class ForecastAdapter extends BaseAdapter {
 
         Forecast item = getItem(position);
 
+        boolean isThreeHours = item.getMain() == null;
+        if (!isThreeHours) {
+            viewHolder.textTimeOfWeather.setVisibility(View.GONE);
+        } else {
+            viewHolder.textTimeOfWeather.setVisibility(View.VISIBLE);
+        }
+
         DateFormat formatTime = new SimpleDateFormat("HH:mm");
         DateFormat formatDate = new SimpleDateFormat("dd/MM/EEEEE");
         Date date = item.getDate();

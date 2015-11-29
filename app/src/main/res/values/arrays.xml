@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="cities">
+        <item>Kiev</item>
+        <item>Cherkasy</item>
+        <item>Lviv</item>
+        <item>Kharkiv</item>
+        <item>Dnipropetrovsk</item>
+        <item>Chernihiv</item>
+        <item>Odessa</item>
+        <item>Kherson</item>
+    </array>
+</resources>

@@ -12,6 +12,7 @@ public class Forecast extends RealmObject {
 
     @PrimaryKey
     private int id;
+    private int city;
     @SerializedName("dt_txt")
     private Date date;
     private Main main;
@@ -19,6 +20,7 @@ public class Forecast extends RealmObject {
     private Wind wind;
 
     public Forecast() {
+        id = 2;
     }
 
     public int getId() {
@@ -27,6 +29,14 @@ public class Forecast extends RealmObject {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getCity() {
+        return city;
+    }
+
+    public void setCity(int city) {
+        this.city = city;
     }
 
     public Date getDate() {

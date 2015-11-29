@@ -1,7 +1,9 @@
 package org.thegeekhub.vbilyk.geekhubweatherforecast.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -23,7 +25,8 @@ import io.realm.Realm;
 
 public class DetailsFragment extends Fragment {
 
-    Context context;
+    private Context context;
+    private TextView detailsCity;
 
     @Nullable
     @Override
@@ -36,6 +39,12 @@ public class DetailsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         int forecastId = getArguments().getInt("forecastId");
+
+        detailsCity = (TextView) view.findViewById(R.id.details_city);
+        Context mContext = getActivity().getApplicationContext();
+        SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String mCity = mPreferences.getString("city", "");
+        detailsCity.setText(mCity);
 
         Forecast forecast = Realm.getInstance(getActivity()).where(Forecast.class).equalTo("id", forecastId).findFirst();
 
@@ -72,6 +81,7 @@ public class DetailsFragment extends Fragment {
         Picasso.with(context)
                 .load(iconUrl)
                 .into(image);
+        getActivity().setTitle("Details");
 
     }
 
