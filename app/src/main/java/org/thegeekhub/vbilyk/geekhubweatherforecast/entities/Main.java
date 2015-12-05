@@ -1,23 +1,17 @@
 package org.thegeekhub.vbilyk.geekhubweatherforecast.entities;
 
-import com.google.gson.annotations.SerializedName;
-
 import io.realm.RealmObject;
 
+@Deprecated
 public class Main extends RealmObject {
 
     private double temp;
-    @SerializedName("temp_min")
     private double tempMin;
-    @SerializedName("temp_max")
     private double tempMax;
     private double pressure;
-    @SerializedName("sea_level")
     private double seaLevel;
-    @SerializedName("grnd_level")
     private double grndLevel;
     private int humidity;
-    @SerializedName("temp_kf")
     private double tempKf;
 
     public Main() {

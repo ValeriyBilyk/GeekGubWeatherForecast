@@ -1,6 +1,5 @@
 package org.thegeekhub.vbilyk.geekhubweatherforecast.entities;
 
-import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
@@ -13,15 +12,16 @@ public class Forecast extends RealmObject {
     @PrimaryKey
     private int id;
     private int city;
-    @SerializedName("dt_txt")
+    private int type;
     private Date date;
-    private Main main;
-    private RealmList<Weather> weather;
-    private Wind wind;
-
-    public Forecast() {
-        id = 2;
-    }
+    private double speed;
+    private int deg;
+    private int clouds;
+    private double rain;
+    private int humidity;
+    private double pressure;
+    private Weather weather;
+    private Temp temp;
 
     public int getId() {
         return id;
@@ -29,6 +29,14 @@ public class Forecast extends RealmObject {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public int getCity() {
@@ -47,28 +55,68 @@ public class Forecast extends RealmObject {
         this.date = date;
     }
 
-    public Main getMain() {
-        return main;
+    public double getSpeed() {
+        return speed;
     }
 
-    public void setMain(Main main) {
-        this.main = main;
+    public void setSpeed(double speed) {
+        this.speed = speed;
     }
 
-    public RealmList<Weather> getWeather() {
+    public int getDeg() {
+        return deg;
+    }
+
+    public void setDeg(int deg) {
+        this.deg = deg;
+    }
+
+    public int getClouds() {
+        return clouds;
+    }
+
+    public void setClouds(int clouds) {
+        this.clouds = clouds;
+    }
+
+    public double getRain() {
+        return rain;
+    }
+
+    public void setRain(double rain) {
+        this.rain = rain;
+    }
+
+    public int getHumidity() {
+        return humidity;
+    }
+
+    public void setHumidity(int humidity) {
+        this.humidity = humidity;
+    }
+
+    public double getPressure() {
+        return pressure;
+    }
+
+    public void setPressure(double pressure) {
+        this.pressure = pressure;
+    }
+
+    public Weather getWeather() {
         return weather;
     }
 
-    public void setWeather(RealmList<Weather> weather) {
+    public void setWeather(Weather weather) {
         this.weather = weather;
     }
 
-    public Wind getWind() {
-        return wind;
+    public Temp getTemp() {
+        return temp;
     }
 
-    public void setWind(Wind wind) {
-        this.wind = wind;
+    public void setTemp(Temp temp) {
+        this.temp = temp;
     }
 }
 

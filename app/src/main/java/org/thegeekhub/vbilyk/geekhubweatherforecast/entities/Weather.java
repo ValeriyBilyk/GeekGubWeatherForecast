@@ -2,9 +2,6 @@ package org.thegeekhub.vbilyk.geekhubweatherforecast.entities;
 
 import io.realm.RealmObject;
 
-/**
- * Created by Admin on 20.11.2015
- */
 public class Weather extends RealmObject {
     private long id;
     private String main;

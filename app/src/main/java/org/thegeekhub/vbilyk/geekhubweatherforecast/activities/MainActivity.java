@@ -8,46 +8,49 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.BaseJsonHttpResponseHandler;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-import org.thegeekhub.vbilyk.geekhubweatherforecast.ForecastAdapter;
+import org.thegeekhub.vbilyk.geekhubweatherforecast.adapters.ForecastAdapter;
 import org.thegeekhub.vbilyk.geekhubweatherforecast.R;
 import org.thegeekhub.vbilyk.geekhubweatherforecast.entities.Forecast;
-import org.thegeekhub.vbilyk.geekhubweatherforecast.entities.Main;
 import org.thegeekhub.vbilyk.geekhubweatherforecast.entities.Response;
+import org.thegeekhub.vbilyk.geekhubweatherforecast.entities.Temp;
 import org.thegeekhub.vbilyk.geekhubweatherforecast.entities.Weather;
-import org.thegeekhub.vbilyk.geekhubweatherforecast.entities.Wind;
 import org.thegeekhub.vbilyk.geekhubweatherforecast.fragments.DetailsFragment;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 import cz.msebera.android.httpclient.Header;
 import io.realm.Realm;
-import io.realm.RealmList;
+import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
+    public static final String TAG = MainActivity.class.getSimpleName();
+    public static final int WEATHER_THREE_HOURS = 3;
+    public static final int WEATHER_DAILY = 7;
     private ForecastAdapter adapter;
     private boolean landSW600dp;
     private Realm realm;
-    private ListView listView;
-    private TextView head;
+    public static final String APP_ID = "ad8683cdea16dddedadcdac0f4a20385";
+    private String cityId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,18 +61,78 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         landSW600dp = findViewById(R.id.frame_weather_details) != null;
 
-        findViewById(R.id.text_time_of_weather);
+        ListView listView = (ListView) findViewById(R.id.list_forecast);
+        listView.setOnItemClickListener(this);
+        adapter = new ForecastAdapter(this);
+        listView.setAdapter(adapter);
+        findViewById(R.id.btn_load).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initRequest();
+            }
+        });
+        initRequest();
+    }
 
-//        Forecast parcelableExtra = getIntent().getParcelableExtra(Forecast.class.getSimpleName());
+    private void initRequest() {
+        if (isNetworkAvailable()) {
+            new AsyncHttpClient().get(getUrl(true), new BaseJsonHttpResponseHandler<Response>() {
 
-        listView = (ListView) findViewById(R.id.listForecast);
-        head = (TextView) findViewById(R.id.head);
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Response response) {
+                    Log.d("onSuccess", String.valueOf(rawJsonResponse));
+                    realm.beginTransaction();
+                    realm.where(Forecast.class).equalTo("city", Integer.parseInt(cityId)).equalTo("type", WEATHER_DAILY).findAll().clear();
+                    realm.copyToRealm(response.getList());
+                    realm.commitTransaction();
+                    new AsyncHttpClient().get(getUrl(false), new BaseJsonHttpResponseHandler<Response>() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Response response) {
+                            Log.d("onSuccess", String.valueOf(rawJsonResponse));
+                            realm.beginTransaction();
+                            realm.where(Forecast.class).equalTo("city", Integer.parseInt(cityId)).equalTo("type", WEATHER_THREE_HOURS).findAll().clear();
+                            realm.copyToRealm(response.getList());
+                            realm.commitTransaction();
+                            fillList();
+                        }
 
-//        String url = "http://api.openweathermap.org/data/2.5/forecast?APPID=ad8683cdea16dddedadcdac0f4a20385&id=703448&units=metric";
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, Response errorResponse) {
+
+                        }
+
+                        @Override
+                        protected Response parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                            return MainActivity.this.parseResponse(rawJsonData);
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, Response errorResponse) {
+                    Log.d("onFailure", String.valueOf(rawJsonData));
+//                    initListView(realm.where(Forecast.class).equalTo("city", Integer.parseInt(cityId)).findAll());
+                }
+
+                @Override
+                protected Response parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
+                    return MainActivity.this.parseResponse(rawJsonData);
+                }
+            });
+        } else {
+//            initListView(realm.where(Forecast.class).equalTo("city", Integer.parseInt(cityId)).findAll());
+        }
+    }
+
+    private void fillList() {
+        RealmResults<Forecast> dailyForecast = realm.where(Forecast.class).equalTo("type", WEATHER_DAILY).equalTo("city", Integer.parseInt(cityId)).findAll();
+        adapter.addAll(dailyForecast);
+        adapter.notifyDataSetChanged();
+    }
+
+    private String getUrl(boolean daily) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        final String cityId;
         String cityName = sharedPref.getString("city", "Kiev");
-        head.setText(cityName);
         switch (cityName) {
             default:
             case "Kiev":
@@ -97,113 +160,92 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 cityId = "706448";
                 break;
         }
-        String appId = "ad8683cdea16dddedadcdac0f4a20385";
-        String forecast = "forecast";
-        String url = new Uri.Builder()
-                .scheme("http")
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("http")
                 .authority("api.openweathermap.org")
                 .appendPath("data")
                 .appendPath("2.5")
-                .appendPath(forecast)
-                .appendQueryParameter("APPID", appId)
+                .appendPath("forecast")
+                .appendQueryParameter("APPID", APP_ID)
                 .appendQueryParameter("units", "metric")
-                .appendQueryParameter("id", cityId)
-                .build().toString();
-
-        if (isNetworkAvailable()) {
-            new AsyncHttpClient().get(url, new BaseJsonHttpResponseHandler<Response>() {
-
-//            private Gson gson;
-
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Response response) {
-                    Log.d("onSuccess", String.valueOf(rawJsonResponse));
-                    List<Forecast> forecastList = response.getList();
-                    initListView(forecastList);
-                    realm.beginTransaction();
-                    realm.where(Forecast.class).equalTo("city", Integer.parseInt(cityId)).findAll().clear();
-//                    for (Forecast cForecast : cityList) {
-//                        cForecast.removeFromRealm();
-//                    }
-                    realm.copyToRealm(forecastList);
-                    realm.commitTransaction();
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, String rawJsonData, Response errorResponse) {
-                    Log.d("onFailure", String.valueOf(rawJsonData));
-                    initListView(realm.where(Forecast.class).equalTo("city", Integer.parseInt(cityId)).findAll());
-                }
-
-                @Override
-                protected Response parseResponse(String rawJsonData, boolean isFailure) throws Throwable {
-//                if (gson == null) {
-//                    gson = new GsonBuilder()
-//                            .setDateFormat("yyyy-MM-dd HH:mm:ss")
-//                            .create();
-//                }
-//                return gson.fromJson(rawJsonData, Response.class);
-                    Random random = new Random();
-                    JSONObject jsonResponse = new JSONObject(rawJsonData);
-                    Response response = new Response();
-                    JSONArray jsonList = jsonResponse.getJSONArray("list");
-                    List<Forecast> forecasts = new ArrayList<>();
-                    for (int i = 0; i < jsonList.length(); i++) {
-                        JSONObject jsonForecast = jsonList.getJSONObject(i);
-                        Forecast forecast = new Forecast();
-                        forecast.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).parse(jsonForecast.optString("dt_txt")));
-
-                        JSONObject jsonWind = jsonForecast.getJSONObject("wind");
-                        Wind wind = new Wind();
-                        wind.setDeg(jsonWind.getDouble("deg"));
-                        wind.setSpeed(jsonWind.getDouble("speed"));
-                        forecast.setWind(wind);
-
-                        JSONObject jsonWeather = jsonForecast.getJSONArray("weather").getJSONObject(0);
-                        RealmList<Weather> weathers = new RealmList<>();
-                        Weather weather = new Weather();
-                        weather.setId(jsonWeather.optLong("id"));
-                        weather.setMain(jsonWeather.optString("main"));
-                        weather.setDescription(jsonWeather.optString("description"));
-                        weather.setIcon(jsonWeather.optString("icon"));
-                        weathers.add(weather);
-                        forecast.setWeather(weathers);
-
-                        JSONObject jsonMain = jsonForecast.optJSONObject("main");
-                        Main main = new Main();
-                        if (jsonMain != null) {
-                            main.setTemp(jsonMain.getDouble("temp"));
-                            main.setTempMin(jsonMain.getDouble("temp_min"));
-                            main.setTempMax(jsonMain.getDouble("temp_max"));
-                            main.setPressure(jsonMain.getDouble("pressure"));
-                            main.setSeaLevel(jsonMain.getDouble("sea_level"));
-                            main.setGrndLevel(jsonMain.getDouble("grnd_level"));
-                            main.setHumidity(jsonMain.getInt("humidity"));
-                            main.setTempKf(jsonMain.getDouble("temp_kf"));
-                            forecast.setMain(main);
-                        }
-
-
-                        int cityId = jsonResponse.getJSONObject("city").getInt("id");
-                        forecast.setCity(cityId);
-
-                        forecast.setId(random.nextInt(Integer.MAX_VALUE));
-
-                        forecasts.add(forecast);
-                    }
-                    response.setList(forecasts);
-                    return response;
-                }
-            });
-        } else {
-            initListView(realm.where(Forecast.class).equalTo("city", Integer.parseInt(cityId)).findAll());
-        }
-        listView.setOnItemClickListener(this);
+                .appendQueryParameter("id", cityId);
+        if (daily) builder.appendPath("daily");
+        if (daily) builder.appendQueryParameter("cnt", "5");
+        return builder.build().toString();
     }
 
-    private void initListView(List<Forecast> forecastList) {
-        adapter = new ForecastAdapter(MainActivity.this, forecastList);
-        listView.setAdapter(adapter);
+    @NonNull
+    private Response parseResponse(String rawJsonData) throws JSONException {
+        Response response = new Response();
+        Random random = new Random();
+        JSONObject jsonResponse = new JSONObject(rawJsonData);
+        JSONArray jsonList = jsonResponse.getJSONArray("list");
+        JSONObject jsonFirstForecast = jsonList.getJSONObject(0);
+        final int type = jsonFirstForecast.has("dt_txt") ? WEATHER_THREE_HOURS : WEATHER_DAILY;
+        Log.d(TAG, String.format("type = %d", type));
+        List<Forecast> forecasts = new ArrayList<>();
+        for (int i = 0; i < jsonList.length(); i++) {
+            JSONObject jsonForecast = jsonList.getJSONObject(i);
+            Forecast forecast = new Forecast();
+
+            JSONObject jsonWeather = jsonForecast.getJSONArray("weather").getJSONObject(0);
+            Weather weather = new Weather();
+            weather.setId(jsonWeather.optLong("id"));
+            weather.setMain(jsonWeather.optString("main"));
+            weather.setDescription(jsonWeather.optString("description"));
+            weather.setIcon(jsonWeather.optString("icon"));
+            forecast.setWeather(weather);
+
+            forecast.setDate(new Date(jsonForecast.getLong("dt") * 1000L));
+
+            Temp temp = new Temp();
+            switch (type) {
+                case WEATHER_DAILY:
+                    forecast.setPressure(jsonForecast.getDouble("pressure"));
+                    forecast.setHumidity(jsonForecast.getInt("humidity"));
+                    forecast.setSpeed(jsonForecast.getDouble("speed"));
+                    forecast.setDeg(jsonForecast.getInt("deg"));
+                    forecast.setClouds(jsonForecast.getInt("clouds"));
+                    forecast.setRain(jsonForecast.optDouble("rain"));
+
+                    JSONObject jsonTemp = jsonForecast.getJSONObject("temp");
+                    temp.setDay(jsonTemp.getDouble("day"));
+                    temp.setMin(jsonTemp.getDouble("min"));
+                    temp.setMax(jsonTemp.getDouble("max"));
+                    temp.setNight(jsonTemp.getDouble("night"));
+                    temp.setEve(jsonTemp.getDouble("eve"));
+                    temp.setMorn(jsonTemp.getDouble("morn"));
+                    break;
+                case WEATHER_THREE_HOURS:
+                    JSONObject jsonMain = jsonForecast.getJSONObject("main");
+                    forecast.setPressure(jsonMain.getDouble("pressure"));
+                    forecast.setHumidity(jsonMain.getInt("humidity"));
+
+
+                    temp.setDay(jsonMain.getDouble("temp"));
+                    temp.setMin(jsonMain.getDouble("temp_min"));
+                    temp.setMax(jsonMain.getDouble("temp_max"));
+
+                    JSONObject jsonWind = jsonForecast.getJSONObject("wind");
+                    forecast.setSpeed(jsonWind.getDouble("speed"));
+                    forecast.setDeg(jsonWind.getInt("deg"));
+
+                    forecast.setRain(jsonForecast.getJSONObject("rain").optDouble("3h"));
+                    forecast.setClouds(jsonForecast.getJSONObject("clouds").getInt("all"));
+                    break;
+            }
+            forecast.setTemp(temp);
+
+
+            int cityId = jsonResponse.getJSONObject("city").getInt("id");
+            forecast.setCity(cityId);
+            forecast.setId(random.nextInt(Integer.MAX_VALUE));
+            forecast.setType(type);
+
+            forecasts.add(forecast);
+        }
+        response.setList(forecasts);
+        return response;
     }
 
     @Override

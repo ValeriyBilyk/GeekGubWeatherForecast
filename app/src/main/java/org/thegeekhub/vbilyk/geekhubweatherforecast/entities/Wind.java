@@ -2,6 +2,7 @@ package org.thegeekhub.vbilyk.geekhubweatherforecast.entities;
 
 import io.realm.RealmObject;
 
+@Deprecated
 public class Wind extends RealmObject {
 
     private double speed;
