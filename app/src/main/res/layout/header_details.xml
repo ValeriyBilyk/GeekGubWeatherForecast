@@ -5,25 +5,39 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:padding="@dimen/normal_padding"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/txt_time_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Вт, 12 декабря"/>
+
+            <TextView
+                android:id="@+id/txt_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="облачно " />
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/img_icon"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="center"
+
             android:layout_margin="@dimen/normal_padding"
             android:src="@drawable/time" />
 
-        <TextView
-            android:id="@+id/txt_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:padding="@dimen/normal_padding"
-            android:text="oblachno" />
     </LinearLayout>
 
     <include layout="@layout/item_forecast_details" />

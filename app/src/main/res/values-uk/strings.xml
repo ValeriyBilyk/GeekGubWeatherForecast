@@ -1,24 +1,29 @@
 <resources>
-    <string name="app_name">Прогноз погоди</string>
+    <string name="app_name">Погода</string>
 
     <string name="action_settings">Налаштування</string>
 
     <string name="city">Місто</string>
     <string name="lang">uk</string>
-    <string name="time_now">Сьогодні</string>
     <string name="text_empty">Дані відсутні</string>
     <string name="text_data_updated">Дані були оновлені %s</string>
     <string name="text_setting_weather">Погода</string>
 
     <array name="cities">
-        <item>Киев</item>
-        <item>Черкассы</item>
-        <item>Львов</item>
-        <item>Харьков</item>
-        <item>Д</item>
-        <item>Чернигов</item>
+        <item>Київ</item>
+        <item>Черкаси</item>
+        <item>Львів</item>
+        <item>Харьків</item>
+        <item>Дніпропетровськ</item>
+        <item>Чернігів</item>
         <item>Одеса</item>
         <item>Херсон</item>
     </array>
+    <string name="text_no_internet">Інтернет відсутній</string>
+    <string name="text_update_now">Оновити зараз</string>
+    <string name="time_now">На день:</string>
+    <string name="txt_pressure_pascal">па</string>
+    <string name="txt_rain_mm">мм</string>
+    <string name="txt_wind_speed_ms">м/с</string>
 </resources>
 

@@ -7,12 +7,15 @@
     <string name="lang">en</string>
     <string name="city_default">0</string>
     <string name="city_key">city</string>
-    <string name="time_now">now</string>
+    <string name="time_now">Day</string>
     <string name="text_empty">No data</string>
     <string name="text_data_updated">Weather updated at %s</string>
     <string name="text_setting_weather">Weather</string>
     <string name="text_update_now">Update now</string>
     <string name="text_no_internet">No internet connection</string>
+    <string name="txt_rain_mm">mm</string>
+    <string name="txt_pressure_pascal">p</string>
+    <string name="txt_wind_speed_ms">m/s</string>
 
 
     <string-array name="cities">

@@ -18,7 +18,9 @@ import org.thegeekhub.vbilyk.geekhubweatherforecast.entities.Forecast;
 import org.thegeekhub.vbilyk.geekhubweatherforecast.utils.PreferenceHelper;
 import org.thegeekhub.vbilyk.geekhubweatherforecast.utils.Utils;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -43,6 +45,10 @@ public class DetailsFragment extends Fragment {
 
         realm = Realm.getInstance(getActivity());
         Forecast forecast = realm.where(Forecast.class).equalTo("id", getArguments().getInt(Forecast.class.getSimpleName())).findFirst();
+        if (forecast == null) {
+            getActivity().finish();
+            return;
+        }
 
         ListView listView = (ListView) view.findViewById(R.id.list_forecast);
         View empty = view.findViewById(R.id.txt_empty);
@@ -54,14 +60,19 @@ public class DetailsFragment extends Fragment {
         TextView txtWind = (TextView) header.findViewById(R.id.txt_wind);
         TextView txtPressure = (TextView) header.findViewById(R.id.txt_pressure);
         TextView txtDescription = (TextView) header.findViewById(R.id.txt_description);
+        TextView txtDate = (TextView) header.findViewById(R.id.txt_time_details);
+
+        String date = new SimpleDateFormat("E, dd MMMM", Locale.getDefault()).format(forecast.getDate());
+        String text = Character.toUpperCase(date.charAt(0)) + date.substring(1);
 
         txtTime.setText(R.string.time_now);
-        txtTempMax.setText(String.format("%d°", Math.round(forecast.getTemp().getMax())));
-        txtTempMin.setText(String.format("%d°", Math.round(forecast.getTemp().getMin())));
+        txtTempMax.setText(String.format("%d°C", Math.round(forecast.getTemp().getMax())));
+        txtTempMin.setText(String.format("%d°C", Math.round(forecast.getTemp().getMin())));
         txtRain.setText(String.valueOf(forecast.getRain()));
         txtPressure.setText(String.valueOf(Math.round(forecast.getPressure())));
         txtWind.setText(String.valueOf(Math.round(forecast.getSpeed())));
         txtDescription.setText(forecast.getWeather().getDescription());
+        txtDate.setText(text);
 
 
         String iconUrl = String.format(Utils.ICON_URL, forecast.getWeather().getIcon());
@@ -70,6 +81,7 @@ public class DetailsFragment extends Fragment {
                 .load(iconUrl)
                 .into(imgIcon);
 
+        listView.addHeaderView(header);
         ForecastDetailsAdapter adapter = new ForecastDetailsAdapter(getActivity());
         listView.setAdapter(adapter);
         RealmResults<Forecast> detailsForecast = realm
@@ -83,7 +95,6 @@ public class DetailsFragment extends Fragment {
         if (detailsForecast.isEmpty()) {
             empty.setVisibility(View.VISIBLE);
         }
-        listView.addHeaderView(header);
     }
 
     @Override

@@ -77,8 +77,8 @@ public class ForecastAdapter extends BaseAdapter {
                     .load(iconUrl)
                     .into(holder.image);
 
-            holder.txtTempMax.setText(String.format("%d°", Math.round(forecast.getTemp().getMax())));
-            holder.txtTempMin.setText(String.format("%d°", Math.round(forecast.getTemp().getMin())));
+            holder.txtTempMax.setText(String.format("%d°C", Math.round(forecast.getTemp().getMax())));
+            holder.txtTempMin.setText(String.format("%d°C", Math.round(forecast.getTemp().getMin())));
             String date = new SimpleDateFormat("E, dd MMMM", Locale.getDefault()).format(forecast.getDate());
             String text = Character.toUpperCase(date.charAt(0)) + date.substring(1);
             holder.txtDate.setText(text);
