@@ -4,56 +4,6 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <ImageView
-        android:src="@drawable/time"
-        android:padding="10dp"
-        android:layout_gravity="center"
-        android:id="@+id/img_icon"
-        android:layout_width="20dp"
-        android:layout_height="20dp" />
-
-    <include layout="@layout/item_forecast_details" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/item_height">
-
-        <ImageView
-            android:src="@drawable/time"
-            android:padding="10dp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content" />
-
-        <ImageView
-            android:src="@drawable/rain"
-            android:padding="5dp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content" />
-
-        <ImageView
-            android:src="@drawable/pressure"
-            android:padding="10dp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content" />
-
-        <ImageView
-            android:src="@drawable/temp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content" />
-
-        <ImageView
-            android:src="@drawable/wind"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
     <ListView
         android:id="@+id/list_forecast"
         android:layout_width="match_parent"

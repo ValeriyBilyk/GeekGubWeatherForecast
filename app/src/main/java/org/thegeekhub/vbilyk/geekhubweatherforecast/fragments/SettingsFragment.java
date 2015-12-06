@@ -14,7 +14,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
 
-        getActivity().setTitle("Settings");
+        getActivity().setTitle(R.string.action_settings);
     }
 
     @Override
@@ -34,7 +34,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals("city")) {
             Preference connectionPref = findPreference(key);
-            connectionPref.setSummary(sharedPreferences.getString(key, "Kiev"));
+            int position = Integer.parseInt(sharedPreferences.getString(key, "0"));
+            connectionPref.setSummary(getActivity().getResources().getStringArray(R.array.cities)[position]);
         }
     }
 }

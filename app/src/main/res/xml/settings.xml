@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Weather">
+    <PreferenceCategory android:title="@string/text_setting_weather">
         <ListPreference
-            android:defaultValue="Kiev"
+            android:defaultValue="@string/city_default"
             android:entries="@array/cities"
-            android:entryValues="@array/cities"
-            android:key="city"
+            android:entryValues="@array/city_values"
+            android:key="@string/city_key"
             android:summary="%s"
-            android:title="City" />
+            android:title="@string/city" />
     </PreferenceCategory>
 </PreferenceScreen>

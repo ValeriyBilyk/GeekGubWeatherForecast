@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Прогноз погоды</string>
+
+    <string name="action_settings">Настройки</string>
+
+    <string name="city">Город</string>
+    <string name="lang">ru</string>
+    <string name="time_now">Сегодня</string>
+    <string name="text_empty">Нет даннных</string>
+    <string name="text_data_updated">Данные были обновлены %s</string>
+    <string name="text_setting_weather">Погода</string>
+
+    <array name="cities">
+        <item>Киев</item>
+        <item>Черкассы</item>
+        <item>Львов</item>
+        <item>Харьков</item>
+        <item>Д</item>
+        <item>Чернигов</item>
+        <item>Одеса</item>
+        <item>Херсон</item>
+    </array>
+    <string name="text_update_now">Обновить сейчас</string>
+</resources>
+

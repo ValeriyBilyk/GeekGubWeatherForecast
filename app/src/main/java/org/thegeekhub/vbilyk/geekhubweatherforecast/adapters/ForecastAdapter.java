@@ -1,7 +1,6 @@
 package org.thegeekhub.vbilyk.geekhubweatherforecast.adapters;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,7 @@ import com.squareup.picasso.Picasso;
 
 import org.thegeekhub.vbilyk.geekhubweatherforecast.R;
 import org.thegeekhub.vbilyk.geekhubweatherforecast.entities.Forecast;
+import org.thegeekhub.vbilyk.geekhubweatherforecast.utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,7 +21,6 @@ import java.util.Locale;
 
 public class ForecastAdapter extends BaseAdapter {
 
-    public static final String ICON_URL = "http://openweathermap.org/img/w/%s.png";
     private final Context context;
     private final LayoutInflater inflater;
 
@@ -39,6 +38,10 @@ public class ForecastAdapter extends BaseAdapter {
 
     public void clear() {
         items.clear();
+    }
+
+    public boolean isEmpty() {
+        return items.isEmpty();
     }
 
     @Override
@@ -68,15 +71,18 @@ public class ForecastAdapter extends BaseAdapter {
         }
 
         Forecast forecast = getItem(position);
-        String iconUrl = String.format(ICON_URL, forecast.getWeather().getIcon());
-        Picasso.with(context)
-                .load(iconUrl)
-                .into(holder.image);
+        if (forecast.isValid()) {
+            String iconUrl = String.format(Utils.ICON_URL, forecast.getWeather().getIcon());
+            Picasso.with(context)
+                    .load(iconUrl)
+                    .into(holder.image);
 
-        holder.txtTempMax.setText(String.format("%d°", Math.round(forecast.getTemp().getMax())));
-        holder.txtTempMin.setText(String.format("%d°", Math.round(forecast.getTemp().getMin())));
-        String date = new SimpleDateFormat("E, dd MMMM", Locale.getDefault()).format(forecast.getDate());
-        holder.txtDate.setText(Character.toUpperCase(date.charAt(0)) + date.substring(1));
+            holder.txtTempMax.setText(String.format("%d°", Math.round(forecast.getTemp().getMax())));
+            holder.txtTempMin.setText(String.format("%d°", Math.round(forecast.getTemp().getMin())));
+            String date = new SimpleDateFormat("E, dd MMMM", Locale.getDefault()).format(forecast.getDate());
+            String text = Character.toUpperCase(date.charAt(0)) + date.substring(1);
+            holder.txtDate.setText(text);
+        }
         return convertView;
     }
 
