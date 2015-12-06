@@ -45,6 +45,7 @@ public class DetailsFragment extends Fragment {
         Forecast forecast = realm.where(Forecast.class).equalTo("id", getArguments().getInt(Forecast.class.getSimpleName())).findFirst();
 
         ListView listView = (ListView) view.findViewById(R.id.list_forecast);
+        View empty = view.findViewById(R.id.txt_empty);
 
         TextView txtTime = (TextView) header.findViewById(R.id.txt_time);
         TextView txtTempMax = (TextView) header.findViewById(R.id.txt_temp_max);
@@ -79,6 +80,9 @@ public class DetailsFragment extends Fragment {
                 .findAll();
         adapter.addAll(detailsForecast);
         adapter.notifyDataSetChanged();
+        if (detailsForecast.isEmpty()) {
+            empty.setVisibility(View.VISIBLE);
+        }
         listView.addHeaderView(header);
     }
 
