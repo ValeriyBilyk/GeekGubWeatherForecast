@@ -75,7 +75,7 @@ public class Utils {
     public static Response parseResponse(String rawJsonData, boolean isFailure) throws JSONException {
         if (isFailure) return null; // TODO: 06.12.15
         Response response = new Response();
-        Random random = new Random();
+        Random random = new Random(); 
         JSONObject jsonResponse = new JSONObject(rawJsonData);
         JSONArray jsonList = jsonResponse.getJSONArray("list");
         JSONObject jsonFirstForecast = jsonList.getJSONObject(0);

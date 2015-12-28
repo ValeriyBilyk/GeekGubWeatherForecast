@@ -22,6 +22,7 @@ import org.thegeekhub.vbilyk.geekhubweatherforecast.entities.Forecast;
 import org.thegeekhub.vbilyk.geekhubweatherforecast.entities.Response;
 import org.thegeekhub.vbilyk.geekhubweatherforecast.entities.TimeUpdated;
 import org.thegeekhub.vbilyk.geekhubweatherforecast.fragments.DetailsFragment;
+import org.thegeekhub.vbilyk.geekhubweatherforecast.services.NotificationService;
 import org.thegeekhub.vbilyk.geekhubweatherforecast.utils.PreferenceHelper;
 import org.thegeekhub.vbilyk.geekhubweatherforecast.utils.Utils;
 
@@ -47,10 +48,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private boolean landSW600dp;
     private Realm realm;
     private int cityId;
+    private ViewFlipper viewFlipper;
+    private SwipeRefreshLayout refreshLayout;
+    private TextView txtUpdated;
+    private boolean needToClear;
     private BaseJsonHttpResponseHandler<Response> handler = new BaseJsonHttpResponseHandler<Response>() {
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, String rawJsonResponse, Response response) {
+            if (realm == null || realm.isClosed()) return;
             switch (response.getList().get(0).getType()) {
                 case WEATHER_DAILY:
                     realm.beginTransaction();
@@ -82,10 +88,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             return Utils.parseResponse(rawJsonData, isFailure);
         }
     };
-    private ViewFlipper viewFlipper;
-    private SwipeRefreshLayout refreshLayout;
-    private TextView txtUpdated;
-    private boolean needToClear;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         listView.setOnItemClickListener(this);
         adapter = new ForecastAdapter(this);
         listView.setAdapter(adapter);
+        startService(new Intent(this, NotificationService.class));
     }
 
     @Override
@@ -117,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         needToClear = true;
         initRequest();
     }
+
 
     private void updateCity() {
         cityId = PreferenceHelper.getInstance(this).getCityId();
@@ -160,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onDestroy() {
         if (realm != null) {
             realm.close();
+            stopService(new Intent(this, NotificationService.class));
         }
         super.onDestroy();
     }
@@ -174,9 +179,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             detailsFragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction().replace(R.id.frame_weather_details, detailsFragment).commit();
         } else {
-            Intent intent = new Intent(this, DetailsActivity.class);
-            intent.putExtra(Forecast.class.getSimpleName(), forecast.getId());
-            startActivity(intent);
+            if (forecast.isValid()) {
+                Intent intent = new Intent(this, DetailsActivity.class);
+                intent.putExtra(Forecast.class.getSimpleName(), forecast.getId());
+                startActivity(intent);
+            }
         }
     }
 

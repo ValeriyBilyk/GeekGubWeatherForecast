@@ -16,6 +16,9 @@
     <string name="txt_rain_mm">mm</string>
     <string name="txt_pressure_pascal">p</string>
     <string name="txt_wind_speed_ms">m/s</string>
+    <string name="notification_title">New forecast</string>
+    <string name="notification_text">Touch to view new forecast</string>
+    <string name="notification_action">Update</string>
 
 
     <string-array name="cities">
