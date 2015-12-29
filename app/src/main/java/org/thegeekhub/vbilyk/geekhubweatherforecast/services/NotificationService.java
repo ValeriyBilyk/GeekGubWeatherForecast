@@ -33,7 +33,7 @@ import static org.thegeekhub.vbilyk.geekhubweatherforecast.utils.Utils.WEATHER_T
 
 
 public class NotificationService extends Service {
-    public static final int WEATHER_TIME_UPDATE_HOURS = 3600;
+    public static final int WEATHER_TIME_UPDATE_HOURS = 60;
 
     private Context mContext;
     private Realm realm;
